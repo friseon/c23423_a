@@ -3,35 +3,21 @@ import WelcomeView from './../welcome/welcome-view';
 import HeaderView from './__header/__header-view';
 import { state } from './../data/state';
 import Game from './game';
+import options from './../data/options';
 
 const headerView = new HeaderView(state);
-const game = new Game();
 
 class GameView extends View {
-    constructor() {
-        super();
-        this.options = {
-            canvasProperties: {
-                width: 800,
-                height: 400,
-            },
-            startPosition: {
-                x: 50,
-                y: 10,
-            },
-            scale: (window.innerWidth / 800) * (window.innerHeight / 400),
-        };
-    }
-
     create = () => {
         this.canvas = this.element.querySelector('canvas');
         this.context = this.canvas.getContext('2d');
+        this.game = new Game(this.canvas, this.context);
 
         this.canvas.width = window.innerWidth;
         this.canvas.height = window.innerHeight - 110;
         window.addEventListener('resize', () => {
-            this.options.scale = (window.innerWidth / this.options.canvasProperties.width) *
-                (window.innerHeight / this.options.canvasProperties.height);
+            options.scale = (window.innerWidth / options.canvasProperties.width) *
+                (window.innerHeight / options.canvasProperties.height);
             this.canvas.width = window.innerWidth;
             this.canvas.height = window.innerHeight - 110;
         });
@@ -50,12 +36,14 @@ class GameView extends View {
 
         headerView.bind(this, headerScope);
 
-        startButton.onclick = () => {};
+        startButton.onclick = () => {
+            this.game.start();
+        };
 
         changeButton.onclick = () => {
             console.log('Change!');
             // state.changeExperience(2);
-            game.upExp();
+            this.game.upExp();
             this.update();
         };
     }
